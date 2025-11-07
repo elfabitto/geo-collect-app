@@ -25,15 +25,15 @@ const createCustomIcon = (color: string) => {
   return L.divIcon({
     className: "custom-marker",
     html: `<div style="
-      width: 30px;
-      height: 30px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background-color: ${color};
-      border: 3px solid white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
     "></div>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
   });
 };
 
@@ -66,7 +66,7 @@ function FlyToProperty({ property }: { property: Property | null }) {
 }
 
 export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
-  const [center] = useState<[number, number]>([-15.7801, -47.9292]); // Brasília como padrão
+  const [center] = useState<[number, number]>([-1.4558, -48.4902]); // Belém, PA como padrão
 
   return (
     <div className="relative w-full h-full">
@@ -76,9 +76,18 @@ export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
         className="absolute inset-0 rounded-lg shadow-lg z-0"
         zoomControl={true}
       >
+        {/* Camada de satélite */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          maxZoom={19}
+        />
+        {/* Camada de labels (nomes de ruas) - CartoDB com apenas labels */}
+        <TileLayer
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png"
+          maxZoom={19}
+          pane="shadowPane"
         />
         
         <MapClickHandler onMapClick={onMapClick} />

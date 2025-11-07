@@ -111,5 +111,35 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
   }
+
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+/* Estilos para o Leaflet */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
+
+.custom-marker {
+  background: transparent;
+  border: none;
+}
+
+/* Camada de labels sobre satélite */
+.labels-only {
+  filter: invert(100%) hue-rotate(180deg) brightness(1.2) contrast(1.1);
+  mix-blend-mode: multiply;
 }

@@ -38,42 +38,89 @@ export type Database = {
         }
         Relationships: []
       }
+      property_photos: {
+        Row: {
+          id: string
+          property_id: string
+          photo_url: string
+          photo_name: string
+          uploaded_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          property_id: string
+          photo_url: string
+          photo_name: string
+          uploaded_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          property_id?: string
+          photo_url?: string
+          photo_name?: string
+          uploaded_at?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_photos_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       properties: {
         Row: {
           address: string
+          complement: string | null
           created_at: string
+          door_number: string | null
           field_observations: string | null
           id: string
           latitude: number
           longitude: number
           photo_url: string | null
           property_number: string
+          registration_number: string | null
+          street: string | null
           updated_at: string
           user_id: string
           water_meter_number: string | null
         }
         Insert: {
           address: string
+          complement?: string | null
           created_at?: string
+          door_number?: string | null
           field_observations?: string | null
           id?: string
           latitude: number
           longitude: number
           photo_url?: string | null
           property_number: string
+          registration_number?: string | null
+          street?: string | null
           updated_at?: string
           user_id: string
           water_meter_number?: string | null
         }
         Update: {
           address?: string
+          complement?: string | null
           created_at?: string
+          door_number?: string | null
           field_observations?: string | null
           id?: string
           latitude?: number
           longitude?: number
           photo_url?: string | null
           property_number?: string
+          registration_number?: string | null
+          street?: string | null
           updated_at?: string
           user_id?: string
           water_meter_number?: string | null
