@@ -5,6 +5,7 @@ import { Database } from "@/integrations/supabase/types";
 import { Map } from "@/components/Map";
 import { PropertyForm } from "@/components/PropertyForm";
 import { PropertyList } from "@/components/PropertyList";
+import { PropertyView } from "@/components/PropertyView";
 import { Button } from "@/components/ui/button";
 import { LogOut, Plus, List, MapIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +19,7 @@ const Index = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showView, setShowView] = useState(false);
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [showList, setShowList] = useState(false);
   const navigate = useNavigate();
@@ -114,6 +116,14 @@ const Index = () => {
   const handleEdit = (property: Property) => {
     setSelectedProperty(property);
     setShowForm(true);
+    setShowView(false);
+    setShowList(false);
+  };
+
+  const handleView = (property: Property) => {
+    setSelectedProperty(property);
+    setShowView(true);
+    setShowForm(false);
     setShowList(false);
   };
 
@@ -152,7 +162,7 @@ const Index = () => {
           />
         </div>
 
-        <div className={`w-full md:w-96 border-l border-border bg-card overflow-y-auto ${!showForm && !showList ? "hidden md:block" : ""}`}>
+        <div className={`w-full md:w-96 border-l border-border bg-card overflow-y-auto ${!showForm && !showList && !showView ? "hidden md:block" : ""}`}>
           {showForm ? (
             <PropertyForm
               property={selectedProperty}
@@ -164,9 +174,18 @@ const Index = () => {
                 setCoordinates(null);
               }}
             />
+          ) : showView && selectedProperty ? (
+            <PropertyView
+              property={selectedProperty}
+              onClose={() => {
+                setShowView(false);
+                setSelectedProperty(null);
+              }}
+            />
           ) : (
             <PropertyList
               properties={properties}
+              onView={handleView}
               onEdit={handleEdit}
               onSelect={handleSelect}
               onDelete={loadProperties}
@@ -175,33 +194,35 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="md:hidden fixed bottom-4 right-4 flex flex-col gap-2">
-        <Button
-          onClick={() => {
-            setShowList(!showList);
-            setShowForm(false);
-          }}
-          size="lg"
-          variant={showList ? "secondary" : "default"}
-          className="rounded-full shadow-lg"
-        >
-          <List className="h-5 w-5 mr-2" />
-          Pontos ({properties.length})
-        </Button>
-        <Button
-          onClick={() => {
-            setShowForm(!showForm);
-            setShowList(false);
-            setCoordinates(null);
-            setSelectedProperty(null);
-          }}
-          size="lg"
-          className="rounded-full shadow-lg"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Novo Ponto
-        </Button>
-      </div>
+      {/* Botões flutuantes - escondidos quando formulário, lista ou visualização estão abertos */}
+      {!showForm && !showList && !showView && (
+        <div className="md:hidden fixed bottom-4 right-4 flex flex-col gap-2">
+          <Button
+            onClick={() => {
+              setShowList(true);
+              setShowForm(false);
+            }}
+            size="lg"
+            className="rounded-full shadow-lg"
+          >
+            <List className="h-5 w-5 mr-2" />
+            Pontos ({properties.length})
+          </Button>
+          <Button
+            onClick={() => {
+              setShowForm(true);
+              setShowList(false);
+              setCoordinates(null);
+              setSelectedProperty(null);
+            }}
+            size="lg"
+            className="rounded-full shadow-lg"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Novo Ponto
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

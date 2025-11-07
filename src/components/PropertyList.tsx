@@ -3,7 +3,7 @@ import { Database } from "@/integrations/supabase/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash2, MapPin, Search } from "lucide-react";
+import { Edit, Trash2, MapPin, Search, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -22,12 +22,13 @@ type Property = Database["public"]["Tables"]["properties"]["Row"];
 
 interface PropertyListProps {
   properties: Property[];
+  onView: (property: Property) => void;
   onEdit: (property: Property) => void;
   onSelect: (property: Property) => void;
   onDelete: () => void;
 }
 
-export function PropertyList({ properties, onEdit, onSelect, onDelete }: PropertyListProps) {
+export function PropertyList({ properties, onView, onEdit, onSelect, onDelete }: PropertyListProps) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -128,21 +129,44 @@ export function PropertyList({ properties, onEdit, onSelect, onDelete }: Propert
                 )}
               </div>
             </div>
-            <div className="flex gap-2 mt-2">
+            <div className="grid grid-cols-3 gap-2 mt-3">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onEdit(property)}
-                className="flex-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onView(property);
+                }}
+                className="flex flex-col items-center gap-1 h-auto py-2"
+                title="Visualizar"
               >
-                <Edit className="h-4 w-4 mr-1" />
-                Editar
+                <Eye className="h-4 w-4" />
+                <span className="text-xs">Ver</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(property);
+                }}
+                className="flex flex-col items-center gap-1 h-auto py-2"
+                title="Editar"
+              >
+                <Edit className="h-4 w-4" />
+                <span className="text-xs">Editar</span>
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="sm" className="flex-1">
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Deletar
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex flex-col items-center gap-1 h-auto py-2 text-destructive hover:text-destructive"
+                    title="Excluir"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="text-xs">Excluir</span>
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
