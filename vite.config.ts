@@ -5,8 +5,8 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  // Base URL: '/' para desenvolvimento local, '/aegeawebgis/' para GitHub Pages
-  base: mode === 'production' ? '/aegeawebgis/' : '/',
+  // Base URL: '/' para desenvolvimento local, '/geo-collect-app/' para GitHub Pages
+  base: mode === 'production' ? '/geo-collect-app/' : '/',
   server: {
     host: "::",
     port: 8080,
