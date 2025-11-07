@@ -76,17 +76,19 @@ export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
         className="absolute inset-0 rounded-lg shadow-lg z-0"
         zoomControl={true}
       >
-        {/* Camada de satélite */}
+        {/* Camada de satélite - Google Satellite */}
         <TileLayer
-          attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          maxZoom={19}
+          attribution='Imagery &copy; Google'
+          url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+          maxZoom={22}
+          maxNativeZoom={20}
         />
         {/* Camada de labels (nomes de ruas) - CartoDB com apenas labels */}
         <TileLayer
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png"
-          maxZoom={19}
+          maxZoom={22}
+          maxNativeZoom={19}
           pane="shadowPane"
         />
         
