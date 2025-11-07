@@ -56,9 +56,10 @@ export function AuthForm() {
           title: "Bem-vindo!",
           description: "Login realizado com sucesso",
         });
-        window.location.href = "/";
+        // Redireciona para a página principal do app
+        window.location.href = "/geo-collect-app/";
       } else {
-        const redirectUrl = `${window.location.origin}/`;
+        const redirectUrl = `${window.location.origin}/geo-collect-app/`;
         
         const { error } = await supabase.auth.signUp({
           email,

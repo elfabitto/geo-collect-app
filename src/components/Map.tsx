@@ -67,20 +67,57 @@ function FlyToProperty({ property }: { property: Property | null }) {
   return null;
 }
 
-// Ícone de localização do usuário (vermelho)
+// Ícone de localização do usuário (vermelho pulsante)
 const userLocationIcon = L.divIcon({
-  className: "custom-marker",
-  html: `<div style="
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: #ef4444;
-    border: 3px solid white;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    cursor: pointer;
-  "></div>`,
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
+  className: "custom-marker-user",
+  html: `
+    <div style="
+      position: relative;
+      width: 20px;
+      height: 20px;
+    ">
+      <div style="
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: rgba(239, 68, 68, 0.3);
+        animation: pulse 2s infinite;
+      "></div>
+      <div style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: #ef4444;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        cursor: pointer;
+        z-index: 1000;
+      "></div>
+    </div>
+    <style>
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.5);
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(2);
+          opacity: 0;
+        }
+      }
+    </style>
+  `,
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
 });
 
 function LocationButton({ onLocationFound }: { onLocationFound: (lat: number, lng: number) => void }) {
@@ -128,8 +165,16 @@ export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   const handleLocationFound = (lat: number, lng: number) => {
+    console.log('📍 Localização encontrada:', { lat, lng });
     setUserLocation({ lat, lng });
   };
+
+  // Debug: mostrar quando userLocation muda
+  useEffect(() => {
+    if (userLocation) {
+      console.log('✅ Marcador vermelho deve aparecer em:', userLocation);
+    }
+  }, [userLocation]);
 
   const handleUserLocationClick = () => {
     if (userLocation && onMapClick) {
