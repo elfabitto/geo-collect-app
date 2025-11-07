@@ -67,29 +67,47 @@ function FlyToProperty({ property }: { property: Property | null }) {
   return null;
 }
 
-function LocationButton() {
+// Ícone de localização do usuário (vermelho)
+const userLocationIcon = L.divIcon({
+  className: "custom-marker",
+  html: `<div style="
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #ef4444;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    cursor: pointer;
+  "></div>`,
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+});
+
+function LocationButton({ onLocationFound }: { onLocationFound: (lat: number, lng: number) => void }) {
   const map = useMap();
   const [loading, setLoading] = useState(false);
 
-  const handleLocate = () => {
+  const handleLocate = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Impede que o clique propague
     setLoading(true);
     map.locate({ setView: true, maxZoom: 16 });
     
-    const onLocationFound = () => {
+    const onFound = (e: L.LocationEvent) => {
       setLoading(false);
-      map.off('locationfound', onLocationFound);
-      map.off('locationerror', onLocationError);
+      onLocationFound(e.latlng.lat, e.latlng.lng);
+      map.off('locationfound', onFound);
+      map.off('locationerror', onError);
     };
     
-    const onLocationError = () => {
+    const onError = () => {
       setLoading(false);
       alert('Não foi possível obter sua localização. Verifique as permissões do navegador.');
-      map.off('locationfound', onLocationFound);
-      map.off('locationerror', onLocationError);
+      map.off('locationfound', onFound);
+      map.off('locationerror', onError);
     };
     
-    map.on('locationfound', onLocationFound);
-    map.on('locationerror', onLocationError);
+    map.on('locationfound', onFound);
+    map.on('locationerror', onError);
   };
 
   return (
@@ -107,6 +125,17 @@ function LocationButton() {
 
 export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
   const [center] = useState<[number, number]>([-1.4558, -48.4902]); // Belém, PA como padrão
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  const handleLocationFound = (lat: number, lng: number) => {
+    setUserLocation({ lat, lng });
+  };
+
+  const handleUserLocationClick = () => {
+    if (userLocation && onMapClick) {
+      onMapClick(userLocation.lat, userLocation.lng);
+    }
+  };
 
   return (
     <div className="relative w-full h-full">
@@ -134,7 +163,25 @@ export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
         
         <MapClickHandler onMapClick={onMapClick} />
         <FlyToProperty property={selectedProperty} />
-        <LocationButton />
+        <LocationButton onLocationFound={handleLocationFound} />
+
+        {/* Marcador de localização do usuário */}
+        {userLocation && (
+          <Marker
+            position={[userLocation.lat, userLocation.lng]}
+            icon={userLocationIcon}
+            eventHandlers={{
+              click: handleUserLocationClick,
+            }}
+          >
+            <Popup>
+              <div className="p-2">
+                <p className="font-bold text-sm">Sua Localização</p>
+                <p className="text-xs text-muted-foreground">Clique para criar um ponto aqui</p>
+              </div>
+            </Popup>
+          </Marker>
+        )}
 
         {properties.map((property) => (
           <Marker
