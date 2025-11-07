@@ -3,6 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "re
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Database } from "@/integrations/supabase/types";
+import { Button } from "@/components/ui/button";
+import { Crosshair } from "lucide-react";
 
 type Property = Database["public"]["Tables"]["properties"]["Row"];
 
@@ -65,6 +67,44 @@ function FlyToProperty({ property }: { property: Property | null }) {
   return null;
 }
 
+function LocationButton() {
+  const map = useMap();
+  const [loading, setLoading] = useState(false);
+
+  const handleLocate = () => {
+    setLoading(true);
+    map.locate({ setView: true, maxZoom: 16 });
+    
+    const onLocationFound = () => {
+      setLoading(false);
+      map.off('locationfound', onLocationFound);
+      map.off('locationerror', onLocationError);
+    };
+    
+    const onLocationError = () => {
+      setLoading(false);
+      alert('Não foi possível obter sua localização. Verifique as permissões do navegador.');
+      map.off('locationfound', onLocationFound);
+      map.off('locationerror', onLocationError);
+    };
+    
+    map.on('locationfound', onLocationFound);
+    map.on('locationerror', onLocationError);
+  };
+
+  return (
+    <Button
+      onClick={handleLocate}
+      disabled={loading}
+      size="icon"
+      className="absolute top-4 right-4 z-[1000] shadow-lg bg-white hover:bg-gray-100 text-primary"
+      title="Minha Localização"
+    >
+      <Crosshair className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+    </Button>
+  );
+}
+
 export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
   const [center] = useState<[number, number]>([-1.4558, -48.4902]); // Belém, PA como padrão
 
@@ -94,6 +134,7 @@ export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
         
         <MapClickHandler onMapClick={onMapClick} />
         <FlyToProperty property={selectedProperty} />
+        <LocationButton />
 
         {properties.map((property) => (
           <Marker

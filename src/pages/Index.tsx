@@ -152,7 +152,7 @@ const Index = () => {
           />
         </div>
 
-        <div className={`w-full md:w-96 border-l border-border bg-card ${!showForm && !showList ? "hidden md:block" : ""}`}>
+        <div className={`w-full md:w-96 border-l border-border bg-card overflow-y-auto ${!showForm && !showList ? "hidden md:block" : ""}`}>
           {showForm ? (
             <PropertyForm
               property={selectedProperty}
