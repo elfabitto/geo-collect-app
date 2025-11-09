@@ -176,12 +176,6 @@ export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
     }
   }, [userLocation]);
 
-  const handleUserLocationClick = () => {
-    if (userLocation && onMapClick) {
-      onMapClick(userLocation.lat, userLocation.lng);
-    }
-  };
-
   return (
     <div className="relative w-full h-full">
       <MapContainer
@@ -215,14 +209,13 @@ export function Map({ onMapClick, selectedProperty, properties }: MapProps) {
           <Marker
             position={[userLocation.lat, userLocation.lng]}
             icon={userLocationIcon}
-            eventHandlers={{
-              click: handleUserLocationClick,
-            }}
           >
             <Popup>
               <div className="p-2">
                 <p className="font-bold text-sm">Sua Localização</p>
-                <p className="text-xs text-muted-foreground">Clique para criar um ponto aqui</p>
+                <p className="text-xs text-muted-foreground">
+                  Lat: {userLocation.lat.toFixed(6)}, Lng: {userLocation.lng.toFixed(6)}
+                </p>
               </div>
             </Popup>
           </Marker>
