@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/geo-collect-app/sw.js', { scope: '/geo-collect-app/' })})}
